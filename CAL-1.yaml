@@ -1,0 +1,205 @@
+# CAL-1: Chat-to-Asset Ledger
+# AI Interaction Asset Accounting Layer
+
+AI_OUTPUT_ACCOUNTING_LAYER:
+  name: Chat-to-Asset Ledger
+  version: CAL-1
+  input: 45mb_chat_export_json
+  purpose: convert historical user AI output into auditable intangible-asset evidence
+
+  core_rule:
+    raw_chat: evidence_vault
+    extracted_artifact: asset_candidate
+    externally_validated_artifact: proof_upgraded_asset
+    paid_or_licensed_artifact: monetized_asset
+
+  unit_of_account:
+    - source_file
+    - conversation
+    - prompt_response_event
+    - artifact
+    - claim
+    - qa_receipt
+    - valuation_entry
+    - proof_upgrade
+
+  pipeline_layers:
+    layer_1_ingestion:
+      purpose: Import and normalize raw chat data
+      process:
+        - import 45MB JSON
+        - assign source hash
+        - split into normalized events
+      output:
+        - stable event ID
+        - timestamp
+        - role
+        - conversation ID
+        - parent/child relation
+        - model if available
+        - source account label
+        - SHA-256 hash
+
+    layer_2_classification:
+      purpose: Classify events by type
+      categories:
+        - ordinary_chat
+        - artifact_generation
+        - code_spec_production
+        - valuation_work
+        - legal_financial_reasoning
+        - product_feedback
+        - model_correction
+        - edge_case_testing
+        - dataset_work
+        - prompt_engineering
+        - repo_instruction
+        - proof_receipt_creation
+
+    layer_3_artifact_extraction:
+      purpose: Extract reusable work units
+      artifact_types:
+        - specs
+        - prompts
+        - schemas
+        - code_blocks
+        - valuation_formulas
+        - qa_receipts
+        - product_ideas
+        - datasets
+        - research_memos
+        - openapi_schemas
+        - ci_rules
+        - repo_instructions
+        - market_analysis_packets
+
+    layer_4_claim_accounting:
+      purpose: Label claims with evidence support
+      claim_labels:
+        verified: "source/file/computation supports it"
+        user_claimed: "user stated it"
+        inferred: "reasonable but not proven"
+        unknown: "not observable"
+        quarantined: "possibly valuable but not defensible yet"
+        blocked: "unsupported or hidden-system claim"
+        externally_validated: "third party confirmed or accepted it"
+        monetized: "generated sale, license, invoice, payment, or accepted collateral"
+
+    layer_5_valuation_accounting:
+      purpose: Estimate replacement cost
+      formula:
+        replacement_cost_base:
+          - artifact_labor_value
+          - evaluation_labor_value
+          - product_feedback_value
+          - edge_case_value
+          - reusable_protocol_value
+        adjustments:
+          - duplication_discount
+          - uncertainty_discount
+          - ownership_risk_discount
+          - stale_claim_discount
+          - external_validation_premium
+          - monetization_premium
+
+    layer_6_journal_accounting:
+      purpose: Create journal entries for asset candidates
+      entry_structure:
+        entry_id: JE-000001
+        date: 2026-06-14
+        source_event_id: EVT-...
+        artifact_id: ART-...
+        debit: interaction_asset_wip
+        credit: user_generated_contribution_surplus
+        valuation_basis: replacement_cost
+        amount_low_usd: 250
+        amount_base_usd: 600
+        amount_high_usd: 1200
+        confidence: 0.62
+        recognition_status: internal_management_only
+        proof_tier: T2_artifact_extracted
+
+    layer_7_proof_upgrade:
+      purpose: Track asset validation progression
+      proof_tiers:
+        T0_raw:
+          meaning: raw chat exists
+          value_status: evidence_only
+
+        T1_normalized:
+          meaning: chat parsed, hashed, indexed
+          value_status: archive_value
+
+        T2_artifact_extracted:
+          meaning: reusable artifact identified
+          value_status: asset_candidate
+
+        T3_validated:
+          meaning: external reviewer, user test, repo use, or customer signal exists
+          value_status: defensible_intangible_asset_evidence
+
+        T4_monetized:
+          meaning: sale, license, paid pilot, invoice, loan acceptance, or signed valuation exists
+          value_status: strongest_financeable_asset
+
+  recognition_status:
+    internal_management_only:
+      use_when: raw, normalized, or extracted but not externally validated
+
+    evidence_backed_candidate:
+      use_when: artifact exists with hash, source events, valuation, and QA receipt
+
+    externally_validated:
+      use_when: third-party review, repo usage, buyer interest, pilot, or signed acceptance exists
+
+    monetized:
+      use_when: actual payment, invoice, license, sale, or lender acceptance exists
+
+    blocked:
+      use_when: hidden provider value, hidden model influence, or ownership cannot be supported
+
+  error_band_rule:
+    before_classification: use wide low/base/high range
+    after_classification: allow +/-35% to +/-50%
+    after_artifact_hashing_and_deduplication: allow +/-25% to +/-35%
+    after_external_validation_sample: allow +/-20%
+    after_monetization_evidence: use actual transaction values
+
+  portfolio_value_formula:
+    raw_archive_value: archival_cost + indexing_cost
+    asset_candidate_value: sum(T2_artifact_replacement_costs * confidence_discount)
+    validated_asset_value: sum(T3_values * validation_multiplier)
+    monetized_asset_value: sum(T4_actual_cash_or_contract_value)
+    total_management_value: raw_archive_value + asset_candidate_value + validated_asset_value + monetized_asset_value
+    formal_financeable_value: validated_asset_value + monetized_asset_value
+
+  blocked_claims:
+    - do_not_value_raw_chat_as_cash
+    - do_not_claim_provider_used_the_data
+    - do_not_claim_openai_or_claude_owes_money
+    - do_not_book_unvalidated_assets_as_realized_revenue
+    - do_not_use_hidden_model_influence_as_valuation_basis
+
+  first_run_outputs:
+    - source_hash.txt
+    - normalized_events.jsonl
+    - conversations_index.jsonl
+    - project_clusters.jsonl
+    - extracted_artifacts.jsonl
+    - claims.jsonl
+    - valuation_entries.jsonl
+    - journal_entries.jsonl
+    - qa_receipts.jsonl
+    - asset_register.md
+    - valuation_summary.md
+    - blocked_claims.md
+
+  accounting_doctrine:
+    statement: >
+      CAL-1 converts historical AI interaction logs into an internal asset register.
+      It values extracted artifacts by replacement cost, discounts uncertainty,
+      separates evidence from proof, and upgrades value only when external validation
+      or monetization exists.
+
+  reference:
+    ifrs_ias_38: https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/

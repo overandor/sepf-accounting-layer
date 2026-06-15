@@ -1,0 +1,246 @@
+# RAFC-1: R&D Artifact Factory and Collateralizer
+# Converts AI-assisted work into R&D-grade repos with CI/CD proof, provenance, valuation, and collateral packets
+
+RAFC_1:
+  name: R&D Artifact Factory and Collateralizer
+  version: RAFC-1
+  purpose: >
+    Convert AI-assisted chats, specs, prompts, code, files, and repo deltas into
+    auditable R&D artifacts, CI/CD provenance, valuation entries, and collateral packets.
+
+  doctrine:
+    raw_chat: evidence_source
+    extracted_spec: r_and_d_candidate
+    repo_commit: controlled_artifact
+    ci_pass: functional_receipt
+    provenance_attestation: integrity_receipt
+    valuation_packet: collateral_candidate
+    third_party_acceptance: proof_upgrade
+
+  blocked_claims:
+    - do_not_claim_tax_credit_eligibility_without_tax_review
+    - do_not_claim_balance_sheet_asset_without_accounting_review
+    - do_not_claim_provider_savings_without_provider_records
+    - do_not_claim_hidden_model_weight_contribution
+    - do_not_value_raw_chat_as_cash
+
+  factory_machines:
+    machine_1_r_and_d_extractor:
+      name: R&D Extractor
+      input:
+        - chat_export_45mb.json
+        - claude_export.json
+        - repo_files
+        - uploaded_artifacts
+      process:
+        - ingest_and_hash_sources
+        - normalize_prompt_response_events
+        - cluster_into_projects
+        - extract_r_and_d_work_units
+      output:
+        - r_and_d_work_units.jsonl
+      work_unit_schema:
+        work_unit_id: RDWU-000001
+        project_id: trading_engine_v6
+        source_events:
+          - chat_event_id
+          - file_hash
+          - repo_commit
+        business_component: "Gate.io micro-notional execution engine"
+        technical_uncertainty: "Can low-capital post-only execution remain stable across many low-price contracts?"
+        experimentation_process:
+          - hypothesis
+          - design_attempt
+          - model_change
+          - bug_fix
+          - backtest
+          - dry_run
+          - ci_check
+        permitted_purpose:
+          - performance
+          - reliability
+          - quality
+          - functionality
+        result: "asset_candidate"
+        proof_tier: T2_artifact_extracted
+
+    machine_2_repo_generator:
+      name: Repo Generator
+      input:
+        - r_and_d_work_units.jsonl
+      process:
+        - generate_repo_blueprints
+        - create_or_update_repos
+      output:
+        - repo_per_project
+      repo_blueprint:
+        repo_name: sepf-rd-{project_id}
+        required_files:
+          - README.md
+          - RND_MEMO.md
+          - SPEC.md
+          - CLAIMS.yaml
+          - EXPERIMENT_LOG.jsonl
+          - VALUATION.yaml
+          - QA_RECEIPTS.jsonl
+          - PROVENANCE.md
+          - COLLATERAL_PACKET.md
+          - .github/workflows/ci.yml
+          - .github/workflows/attest.yml
+
+    machine_3_ci_cd_provenance:
+      name: CI/CD Provenance
+      input:
+        - repo_per_project
+      process:
+        - run_ci_cd
+        - create_provenance_attestations
+      output:
+        - ci_receipts
+        - provenance_receipts
+      provenance_pipeline:
+        checks:
+          - lint
+          - unit_tests
+          - schema_validation
+          - blocked_claim_scan
+          - secrets_scan
+          - valuation_assumption_check
+          - artifact_hash_generation
+          - build_attestation
+        receipts:
+          - source_hash
+          - commit_hash
+          - ci_run_id
+          - artifact_digest
+          - attestation_bundle
+          - qa_receipt
+
+    machine_4_r_and_d_memo_generator:
+      name: R&D Memo Generator
+      input:
+        - r_and_d_work_units.jsonl
+        - ci_receipts
+      process:
+        - generate_r_and_d_memos
+      output:
+        - r_and_d_memos
+      r_and_d_memo:
+        sections:
+          - business_component
+          - technical_uncertainty
+          - experiment_attempted
+          - alternatives_tested
+          - failure_or_repair_log
+          - artifact_created
+          - ci_result
+          - claim_labels
+          - accounting_boundary
+          - tax_review_required
+
+    machine_5_valuation_and_collateral:
+      name: Valuation and Collateral Packet
+      input:
+        - r_and_d_memos
+        - provenance_receipts
+      process:
+        - generate_valuation_entries
+        - generate_collateral_packets
+      output:
+        - valuation_packet
+        - collateral_packet
+      collateral_packet:
+        artifact_id: ART-000001
+        repo: github_url
+        source_hash: sha256
+        commit_hash: git_sha
+        ci_status: passed
+        provenance_status: attested
+        valuation_basis: replacement_cost
+        low_usd: 2500
+        base_usd: 7500
+        high_usd: 15000
+        confidence: 0.64
+        discounts:
+          uncertainty_discount: 0.30
+          duplication_discount: 0.10
+          ownership_risk_discount: 0.15
+        proof_upgrade_needed:
+          - external reviewer
+          - paid pilot
+          - buyer quote
+          - signed license
+          - accountant review
+
+    machine_6_accounting_boundary:
+      name: Accounting Boundary
+      input:
+        - collateral_packet
+      process:
+        - apply_recognition_status
+        - generate_journal_entries
+      output:
+        - journal_entries
+        - recognition_status
+      recognition_status:
+        evidence_only:
+          meaning: raw chat or untested artifact exists
+
+        internal_management_asset_candidate:
+          meaning: extracted, hashed, classified, valued by replacement cost
+
+        validated_collateral_candidate:
+          meaning: repo exists, CI passed, provenance attached, valuation packet created
+
+        externally_validated_asset:
+          meaning: third party reviewed, used, bought, licensed, funded, or accepted
+
+        blocked:
+          meaning: ownership, legality, originality, or proof boundary failed
+
+  full_pipeline:
+    input:
+      - chat_export_45mb.json
+      - claude_export.json
+      - repo_files
+      - uploaded_artifacts
+
+    process:
+      - ingest_and_hash_sources
+      - normalize_prompt_response_events
+      - cluster_into_projects
+      - extract_r_and_d_work_units
+      - generate_repo_blueprints
+      - create_or_update_repos
+      - run_ci_cd
+      - create_provenance_attestations
+      - generate_r_and_d_memos
+      - generate_valuation_entries
+      - generate_collateral_packets
+      - write_qa_receipts
+
+    output:
+      - repo_per_project
+      - artifact_register
+      - experiment_log
+      - r_and_d_memo
+      - ci_receipts
+      - provenance_receipts
+      - valuation_packet
+      - collateral_packet
+
+  product_sentence: >
+    RAFC-1 converts AI-assisted work into R&D-grade repos with CI/CD proof,
+    provenance attestations, valuation memos, and collateral packets.
+
+  finance_safe_claim: >
+    This archive contains AI-assisted R&D artifact candidates. Each candidate is
+    converted into a repo-backed, CI-tested, provenance-attested work unit and valued
+    by replacement cost. External accounting, tax, lender, buyer, or legal acceptance
+    is required before it becomes formal collateral or recognized value.
+
+  references:
+    irs_research_credit: https://www.irs.gov/businesses/audit-techniques-guide-credit-for-increasing-research-activities
+    github_provenance: https://docs.github.com/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds
+    slsa: https://slsa.dev/
+    fasb_internal_use_software: https://www.fasb.org/Page/Document?pdf=ASU+2025-06.pdf&title=Accounting+Standards+Update+2025-06%E2%80%94Intangibles%E2%80%94Goodwill+and+Other%E2%80%94Internal-Use+Software+%28Subtopic+350-40%29%3A+Targeted+Improvements+to+the+Accounting+for+Internal-Use+Software

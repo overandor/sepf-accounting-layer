@@ -1,0 +1,56 @@
+name: Build Attestation
+
+on:
+  workflow_run:
+    workflows: [SEPF CI Validation]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download validation report
+        uses: actions/download-artifact@v4
+        with:
+          name: validation-report
+          path: ./validation
+
+      - name: Generate source hash
+        run: |
+          python ci/generate_source_hash.py > source_hash.txt
+
+      - name: Generate artifact digest
+        run: |
+          python ci/generate_artifact_digest.py > artifact_digest.txt
+
+      - name: Create attestation bundle
+        run: |
+          python ci/create_attestation_bundle.py
+
+      - name: Sign attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: './artifacts/*'
+          push-to-registry: false
+
+      - name: Upload attestation
+        uses: actions/upload-artifact@v4
+        with:
+          name: attestation-bundle
+          path: ./attestation_bundle.json
+
+      - name: Upload provenance receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: provenance-receipt
+          path: ./provenance_receipt.json

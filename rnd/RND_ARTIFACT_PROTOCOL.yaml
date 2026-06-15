@@ -1,0 +1,329 @@
+# AI-Assisted R&D Artifact Protocol
+# Converts chat output into repo-backed, CI-tested, collateral-ready artifacts
+
+ai_assisted_rnd_artifact_system:
+  doctrine: >
+    Chat output becomes R&D evidence only after it is converted into a
+    versioned repo artifact with tests, provenance, receipts, valuation,
+    and proof-upgrade status.
+
+  unit_of_account:
+    - project
+    - experiment
+    - artifact
+    - claim
+    - receipt
+    - ci_run
+    - valuation_entry
+    - collateral_packet
+
+  proof_boundary:
+    evidence: "repo, hashes, commits, tests, receipts, logs, specs"
+    proof: "external validation, paid use, signed review, lender acceptance, customer adoption"
+    blocked: "raw chat as cash, hidden provider value, hidden model influence, unverified R&D tax claim"
+
+  conversion_path:
+    T0_raw_chat:
+      status: evidence_vault
+      value: archival_only
+
+    T1_normalized_events:
+      status: indexed_work_history
+      value: management_accounting
+
+    T2_repo_artifacts:
+      status: asset_candidates
+      value: replacement_cost_estimate
+
+    T3_ci_provenance:
+      status: defensible_rnd_evidence
+      value: stronger_collateral_packet
+
+    T4_external_validation:
+      status: proof_upgraded_asset
+      value: financeable_evidence
+
+    T5_monetization:
+      status: realized_asset_signal
+      value: transaction_based
+
+  repo_structure:
+    README.md:
+      purpose: product thesis, scope, status
+      required: true
+
+    rnd/experiments.jsonl:
+      purpose: uncertainty, hypothesis, test, result
+      required: true
+      schema:
+        - experiment_id
+        - project_id
+        - hypothesis
+        - uncertainty_addressed
+        - test_method
+        - result
+        - timestamp
+        - proof_tier
+
+    rnd/technical_uncertainties.md:
+      purpose: what was unknown and why work was needed
+      required: true
+      sections:
+        - business_component
+        - technological_uncertainty
+        - experimentation_approach
+        - elimination_of_uncertainty
+
+    artifacts/artifacts.jsonl:
+      purpose: extracted specs, schemas, code, memos, datasets
+      required: true
+      schema:
+        - artifact_id
+        - project_id
+        - artifact_type
+        - title
+        - summary
+        - artifact_hash
+        - source_event_ids
+        - proof_tier
+
+    claims/claims.jsonl:
+      purpose: claim labels and evidence refs
+      required: true
+      schema:
+        - claim_id
+        - artifact_id
+        - claim_text
+        - claim_label
+        - evidence_refs
+        - risk_level
+
+    receipts/qa_receipts.jsonl:
+      purpose: created/verified/inferred/blocked/next steps
+      required: true
+      schema:
+        - receipt_id
+        - artifact_id
+        - created
+        - verified
+        - inferred
+        - blocked
+        - next_repo_delta
+        - next_proof_upgrade
+        - receipt_hash
+
+    valuation/replacement_cost.yaml:
+      purpose: low/base/high value model
+      required: true
+      sections:
+        - valuation_method
+        - labor_components
+        - adjustments
+        - error_band
+        - confidence
+
+    collateral/collateral_packet.md:
+      purpose: lender/buyer/investor-facing summary
+      required: true
+      sections:
+        - project_summary
+        - business_component
+        - technical_uncertainty
+        - experimentation_path
+        - artifacts_created
+        - provenance_hashes
+        - ci_results
+        - claim_labels
+        - valuation_low_base_high
+        - ownership_boundary
+        - blocked_claims
+        - external_validation_needed
+        - monetization_paths
+
+    provenance/source_manifest.jsonl:
+      purpose: source chats/files/commits/hashes
+      required: true
+      schema:
+        - source_id
+        - source_type
+        - source_path
+        - source_hash
+        - timestamp
+        - artifact_ids
+
+    .github/workflows/sepf-ci.yml:
+      purpose: automated validation
+      required: true
+
+  ci_checks:
+    - yaml_valid
+    - jsonl_valid
+    - source_hash_present
+    - every_artifact_has_receipt
+    - every_major_claim_has_label
+    - no_blocked_claims_in_collateral_packet
+    - valuation_has_low_base_high
+    - proof_boundary_present
+    - citations_present_for_external_facts
+    - no_secret_or_pii_leakage
+
+  qualified_research_tests:
+    permitted_purpose:
+      description: Research must be for a permitted purpose (new or improved function, performance, reliability, or quality)
+      evidence_required: business_component, technological_uncertainty
+
+    technological_nature:
+      description: Research must rely on principles of physical or biological sciences, engineering, or computer science
+      evidence_required: technical_uncertainty, experimentation_approach
+
+    elimination_of_uncertainty:
+      description: Research must be intended to discover information that could eliminate uncertainty
+      evidence_required: hypothesis, test_method, result
+
+    process_of_experimentation:
+      description: Research must involve a process of experimentation (systematic trial and error)
+      evidence_required: experiments.jsonl, technical_uncertainties.md
+
+  collateral_packet_sections:
+    project_summary:
+      description: High-level overview of the R&D project
+      required_fields:
+        - project_name
+        - business_component
+        - start_date
+        - status
+        - objective
+
+    business_component:
+      description: Specific business component being improved
+      required_fields:
+        - component_name
+        - current_state
+        - target_state
+        - business_value
+
+    technical_uncertainty:
+      description: Technical uncertainties addressed
+      required_fields:
+        - uncertainty_description
+        - why_unknown
+        - impact_if_unresolved
+
+    experimentation_path:
+      description: Systematic experimentation approach
+      required_fields:
+        - hypothesis
+        - test_methods
+        - results
+        - conclusions
+
+    artifacts_created:
+      description: Reusable artifacts generated
+      required_fields:
+        - artifact_list
+        - artifact_hashes
+        - artifact_types
+        - reuse_potential
+
+    provenance_hashes:
+      description: Source traceability
+      required_fields:
+        - source_chats
+        - source_commits
+        - hash_chain
+        - timestamp_chain
+
+    ci_results:
+      description: CI/CD validation results
+      required_fields:
+        - test_results
+        - validation_status
+        - build_artifacts
+        - deployment_status
+
+    claim_labels:
+      description: Claim classification
+      required_fields:
+        - verified_claims
+        - user_claimed_claims
+        - inferred_claims
+        - blocked_claims
+
+    valuation_low_base_high:
+      description: Replacement cost valuation
+      required_fields:
+        - low_usd
+        - base_usd
+        - high_usd
+        - error_band
+        - confidence
+        - assumptions
+
+    ownership_boundary:
+      description: Ownership and IP rights
+      required_fields:
+        - owner_id
+        - license_terms
+        - restrictions
+        - third_party_components
+
+    blocked_claims:
+      description: Claims that cannot be supported
+      required_fields:
+        - blocked_claim_list
+        - blocking_reason
+        - remediation_needed
+
+    external_validation_needed:
+      description: Required external validation
+      required_fields:
+        - validation_type
+        - required_parties
+        - timeline
+        - success_criteria
+
+    monetization_paths:
+      description: Potential monetization routes
+      required_fields:
+        - path_1
+        - path_2
+        - path_3
+        - revenue_potential
+
+  accounting_conversion:
+    T0_to_T1:
+      journal_entry:
+        debit: 1100_raw_chat_evidence_vault
+        credit: 3000_user_generated_contribution_surplus
+      recognition_status: internal_management_only
+
+    T1_to_T2:
+      journal_entry:
+        debit: 1200_normalized_interaction_archive
+        credit: 3000_user_generated_contribution_surplus
+      recognition_status: internal_management_only
+
+    T2_to_T3:
+      journal_entry:
+        debit: 1300_interaction_asset_wip
+        credit: 3000_user_generated_contribution_surplus
+      recognition_status: evidence_backed_candidate
+
+    T3_to_T4:
+      journal_entry:
+        debit: 1400_validated_intangible_asset_candidates
+        credit: 3100_external_validation_surplus
+      recognition_status: externally_validated
+
+    T4_to_T5:
+      journal_entry:
+        debit: 1500_monetized_ai_output_assets
+        credit: 3200_monetization_surplus
+      recognition_status: monetized
+
+  one_line_doctrine: >
+    Chat → artifact → repo → CI → provenance → valuation → collateral packet → external validation
+
+  references:
+    irs_research_credit: https://www.irs.gov/businesses/audit-techniques-guide-credit-for-increasing-research-activities
+    github_actions: https://docs.github.com/actions

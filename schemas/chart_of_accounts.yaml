@@ -1,0 +1,204 @@
+# Chart of Accounts for AI Interaction Asset Ledger
+# CAL-1 Accounting Layer
+
+chart_of_accounts:
+  assets:
+    1100_raw_chat_evidence_vault:
+      description: Raw chat export files as evidence
+      type: asset
+      classification: current
+      normal_balance: debit
+
+    1200_normalized_interaction_archive:
+      description: Parsed and indexed chat events
+      type: asset
+      classification: current
+      normal_balance: debit
+
+    1300_interaction_asset_wip:
+      description: Work-in-progress extracted artifacts
+      type: asset
+      classification: current
+      normal_balance: debit
+
+    1400_validated_intangible_asset_candidates:
+      description: Externally validated asset candidates
+      type: asset
+      classification: non_current
+      normal_balance: debit
+
+    1500_monetized_ai_output_assets:
+      description: Monetized or licensed AI output assets
+      type: asset
+      classification: non_current
+      normal_balance: debit
+
+  contra_assets:
+    1900_uncertainty_discount:
+      description: Discount for valuation uncertainty
+      type: contra_asset
+      classification: current
+      normal_balance: credit
+
+    1910_duplication_discount:
+      description: Discount for duplicate artifacts
+      type: contra_asset
+      classification: current
+      normal_balance: credit
+
+    1920_stale_claim_discount:
+      description: Discount for outdated claims
+      type: contra_asset
+      classification: current
+      normal_balance: credit
+
+    1930_ownership_risk_discount:
+      description: Discount for ownership risk
+      type: contra_asset
+      classification: current
+      normal_balance: credit
+
+  equity:
+    3000_user_generated_contribution_surplus:
+      description: Surplus from user-generated AI contributions
+      type: equity
+      classification: contributed_capital
+      normal_balance: credit
+
+    3100_external_validation_surplus:
+      description: Surplus from external validation
+      type: equity
+      classification: retained_earnings
+      normal_balance: credit
+
+    3200_monetization_surplus:
+      description: Surplus from monetization activities
+      type: equity
+      classification: retained_earnings
+      normal_balance: credit
+
+  revenue:
+    4000_license_revenue:
+      description: Revenue from licensing AI artifacts
+      type: revenue
+      classification: operating
+      normal_balance: credit
+
+    4100_artifact_sale_revenue:
+      description: Revenue from selling AI artifacts
+      type: revenue
+      classification: operating
+      normal_balance: credit
+
+    4200_consulting_conversion_revenue:
+      description: Revenue from consulting based on AI artifacts
+      type: revenue
+      classification: operating
+      normal_balance: credit
+
+    4300_data_product_revenue:
+      description: Revenue from data products derived from AI artifacts
+      type: revenue
+      classification: operating
+      normal_balance: credit
+
+  expense_equivalent:
+    5000_replacement_cost_artifact_labor:
+      description: Labor cost to recreate artifacts
+      type: expense_equivalent
+      classification: operating
+      normal_balance: debit
+
+    5100_replacement_cost_evaluation_labor:
+      description: Labor cost to evaluate artifacts
+      type: expense_equivalent
+      classification: operating
+      normal_balance: debit
+
+    5200_replacement_cost_product_feedback:
+      description: Cost to recreate product feedback
+      type: expense_equivalent
+      classification: operating
+      normal_balance: debit
+
+    5300_replacement_cost_protocol_design:
+      description: Cost to recreate protocol design
+      type: expense_equivalent
+      classification: operating
+      normal_balance: debit
+
+accounting_rules:
+  recognition:
+    internal_management_only:
+      allowed_accounts: [1100_raw_chat_evidence_vault, 1200_normalized_interaction_archive, 1300_interaction_asset_wip]
+      proof_tier: [T0_raw, T1_normalized, T2_artifact_extracted]
+
+    evidence_backed_candidate:
+      allowed_accounts: [1300_interaction_asset_wip, 1400_validated_intangible_asset_candidates]
+      proof_tier: [T2_artifact_extracted]
+      requirements: [hash, source_events, valuation, qa_receipt]
+
+    externally_validated:
+      allowed_accounts: [1400_validated_intangible_asset_candidates]
+      proof_tier: [T3_validated]
+      requirements: [external_review, repo_usage, buyer_interest, pilot, signed_acceptance]
+
+    monetized:
+      allowed_accounts: [1500_monetized_ai_output_assets]
+      proof_tier: [T4_monetized]
+      requirements: [payment, invoice, license, sale, lender_acceptance]
+
+    blocked:
+      allowed_accounts: []
+      proof_tier: []
+      blocked_reasons: [hidden_provider_value, hidden_model_influence, ownership_cannot_be_supported]
+
+  journal_entry_templates:
+    artifact_extraction:
+      debit: 1300_interaction_asset_wip
+      credit: 3000_user_generated_contribution_surplus
+      valuation_basis: replacement_cost
+      recognition_status: internal_management_only
+
+    external_validation:
+      debit: 1400_validated_intangible_asset_candidates
+      credit: 3100_external_validation_surplus
+      valuation_basis: replacement_cost
+      recognition_status: externally_validated
+
+    monetization:
+      debit: 1500_monetized_ai_output_assets
+      credit: 3200_monetization_surplus
+      valuation_basis: transaction_value
+      recognition_status: monetized
+
+  discount_application:
+    uncertainty_discount:
+      account: 1900_uncertainty_discount
+      trigger: confidence_below_0.7
+      rate: 0.15
+
+    duplication_discount:
+      account: 1910_duplication_discount
+      trigger: duplicate_artifact_detected
+      rate: 0.20
+
+    stale_claim_discount:
+      account: 1920_stale_claim_discount
+      trigger: claim_older_than_180_days
+      rate: 0.10
+
+    ownership_risk_discount:
+      account: 1930_ownership_risk_discount
+      trigger: ownership_uncertainty
+      rate: 0.25
+
+    external_validation_premium:
+      account: 3100_external_validation_surplus
+      trigger: external_validation_received
+      rate: 0.15
+
+    monetization_premium:
+      account: 3200_monetization_surplus
+      trigger: monetization_event
+      rate: 0.20

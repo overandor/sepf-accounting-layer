@@ -1,0 +1,81 @@
+name: SEPF CI Validation
+
+on:
+  push:
+    paths:
+      - 'accounting/**'
+      - 'rnd/**'
+      - 'provenance/**'
+      - 'collateral/**'
+  pull_request:
+    paths:
+      - 'accounting/**'
+      - 'rnd/**'
+      - 'provenance/**'
+      - 'collateral/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml pydantic jsonschema
+
+      - name: Validate YAML files
+        run: |
+          python ci/validate_yaml.py
+
+      - name: Validate JSONL files
+        run: |
+          python ci/validate_jsonl.py
+
+      - name: Check source hashes
+        run: |
+          python ci/check_source_hashes.py
+
+      - name: Validate artifact receipts
+        run: |
+          python ci/validate_artifact_receipts.py
+
+      - name: Validate claim labels
+        run: |
+          python ci/validate_claim_labels.py
+
+      - name: Check blocked claims in collateral
+        run: |
+          python ci/check_blocked_claims.py
+
+      - name: Validate valuation structure
+        run: |
+          python ci/validate_valuation.py
+
+      - name: Check proof boundaries
+        run: |
+          python ci/check_proof_boundaries.py
+
+      - name: Check citations for external facts
+        run: |
+          python ci/check_citations.py
+
+      - name: Scan for secrets and PII
+        run: |
+          python ci/scan_secrets.py
+
+      - name: Generate validation report
+        run: |
+          python ci/generate_validation_report.py
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation_report.json

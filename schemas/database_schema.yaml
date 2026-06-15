@@ -1,0 +1,219 @@
+# Database Schema for AI Interaction Asset Ledger
+# CAL-1 Accounting Layer
+
+tables:
+  source_files:
+    description: Raw chat export files
+    columns:
+      - name: source_file_id
+        type: UUID
+        primary_key: true
+      - name: filename
+        type: VARCHAR(255)
+      - name: source_platform
+        type: VARCHAR(50)
+        enum: [chatgpt, claude, local, generic]
+      - name: imported_at
+        type: TIMESTAMP
+      - name: sha256
+        type: VARCHAR(64)
+      - name: size_bytes
+        type: BIGINT
+      - name: owner_id
+        type: VARCHAR(100)
+
+  conversations:
+    description: Chat conversations from source files
+    columns:
+      - name: conversation_id
+        type: UUID
+        primary_key: true
+      - name: source_file_id
+        type: UUID
+        foreign_key: source_files.source_file_id
+      - name: title
+        type: VARCHAR(500)
+      - name: created_at
+        type: TIMESTAMP
+      - name: updated_at
+        type: TIMESTAMP
+      - name: project_id
+        type: VARCHAR(100)
+      - name: project_type
+        type: VARCHAR(50)
+
+  events:
+    description: Individual prompt/response events
+    columns:
+      - name: event_id
+        type: UUID
+        primary_key: true
+      - name: conversation_id
+        type: UUID
+        foreign_key: conversations.conversation_id
+      - name: role
+        type: VARCHAR(20)
+        enum: [user, assistant, system]
+      - name: timestamp
+        type: TIMESTAMP
+      - name: content_hash
+        type: VARCHAR(64)
+      - name: token_estimate
+        type: INTEGER
+      - name: classification
+        type: VARCHAR(50)
+      - name: parent_event_id
+        type: UUID
+        foreign_key: events.event_id
+        nullable: true
+
+  artifacts:
+    description: Extracted reusable work units
+    columns:
+      - name: artifact_id
+        type: UUID
+        primary_key: true
+      - name: project_id
+        type: VARCHAR(100)
+      - name: source_event_ids
+        type: JSONB
+      - name: artifact_type
+        type: VARCHAR(50)
+        enum: [spec, prompt, schema, code, memo, dataset, protocol, receipt, valuation]
+      - name: title
+        type: VARCHAR(500)
+      - name: summary
+        type: TEXT
+      - name: artifact_hash
+        type: VARCHAR(64)
+      - name: reuse_score
+        type: DECIMAL(3,2)
+      - name: financeability_score
+        type: DECIMAL(3,2)
+      - name: proof_tier
+        type: VARCHAR(20)
+        enum: [T0_raw, T1_normalized, T2_artifact_extracted, T3_validated, T4_monetized]
+
+  claims:
+    description: Claims with evidence support
+    columns:
+      - name: claim_id
+        type: UUID
+        primary_key: true
+      - name: artifact_id
+        type: UUID
+        foreign_key: artifacts.artifact_id
+      - name: claim_text
+        type: TEXT
+      - name: claim_label
+        type: VARCHAR(50)
+        enum: [verified, user_claimed, inferred, unknown, quarantined, blocked, externally_validated, monetized]
+      - name: evidence_refs
+        type: JSONB
+      - name: risk_level
+        type: VARCHAR(20)
+        enum: [low, medium, high, critical]
+      - name: proof_upgrade_needed
+        type: JSONB
+
+  valuation_entries:
+    description: Valuation estimates for artifacts
+    columns:
+      - name: valuation_id
+        type: UUID
+        primary_key: true
+      - name: artifact_id
+        type: UUID
+        foreign_key: artifacts.artifact_id
+      - name: valuation_basis
+        type: VARCHAR(50)
+        enum: [replacement_cost, market_value, income_approach]
+      - name: low_usd
+        type: DECIMAL(12,2)
+      - name: base_usd
+        type: DECIMAL(12,2)
+      - name: high_usd
+        type: DECIMAL(12,2)
+      - name: error_band
+        type: DECIMAL(5,2)
+      - name: confidence
+        type: DECIMAL(3,2)
+      - name: assumptions_hash
+        type: VARCHAR(64)
+      - name: recognition_status
+        type: VARCHAR(50)
+        enum: [internal_management_only, evidence_backed_candidate, externally_validated, monetized, blocked]
+
+  journal_entries:
+    description: Accounting journal entries
+    columns:
+      - name: journal_entry_id
+        type: UUID
+        primary_key: true
+      - name: artifact_id
+        type: UUID
+        foreign_key: artifacts.artifact_id
+      - name: debit_account
+        type: VARCHAR(100)
+      - name: credit_account
+        type: VARCHAR(100)
+      - name: amount_base_usd
+        type: DECIMAL(12,2)
+      - name: recognition_status
+        type: VARCHAR(50)
+        enum: [internal_management_only, evidence_backed_candidate, externally_validated, monetized, blocked]
+      - name: proof_tier
+        type: VARCHAR(20)
+        enum: [T0_raw, T1_normalized, T2_artifact_extracted, T3_validated, T4_monetized]
+      - name: created_at
+        type: TIMESTAMP
+
+  qa_receipts:
+    description: QA receipts for artifacts
+    columns:
+      - name: receipt_id
+        type: UUID
+        primary_key: true
+      - name: artifact_id
+        type: UUID
+        foreign_key: artifacts.artifact_id
+      - name: created
+        type: JSONB
+      - name: verified
+        type: JSONB
+      - name: inferred
+        type: JSONB
+      - name: blocked
+        type: JSONB
+      - name: next_repo_delta
+        type: TEXT
+      - name: next_proof_upgrade
+        type: JSONB
+      - name: receipt_hash
+        type: VARCHAR(64)
+
+indexes:
+  - table: source_files
+    columns: [owner_id, sha256]
+    unique: true
+
+  - table: conversations
+    columns: [source_file_id, project_id]
+
+  - table: events
+    columns: [conversation_id, timestamp]
+
+  - table: artifacts
+    columns: [project_id, proof_tier]
+
+  - table: claims
+    columns: [artifact_id, claim_label]
+
+  - table: valuation_entries
+    columns: [artifact_id, recognition_status]
+
+  - table: journal_entries
+    columns: [artifact_id, proof_tier]
+
+  - table: qa_receipts
+    columns: [artifact_id, receipt_hash]
